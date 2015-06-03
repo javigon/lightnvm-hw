@@ -1,0 +1,20 @@
+#!/bin/bash
+# A simple script to build a .deb file for a linux image. Call this
+# script inside the top-folder of the linux source tree. Ensure you
+# have a .config in that folder. After running this script you still
+# need to install the kernal using dkpg -i. NB you should run this
+# script as root or fakeroot (preferably the later). You probably also
+# want to run 
+#
+# fakeroot make-kpkg clean
+#
+# beforehand to cleanup the tree if you have built in it before. Also
+# note that for some reason you might also need to run
+#
+# sudo depmod
+#
+# and reboot to get modules to load as expected.
+
+VERSION=0.2
+
+make-kpkg --initrd --append-to-version +lightnvm.${VERSION} kernel_image 

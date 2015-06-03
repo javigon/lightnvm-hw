@@ -1,0 +1,22 @@
+#!/bin/bash
+# Simple script to run QEMU for lightNVM analysis. This QEMU was
+# configured using the following:
+#
+# ./configure --enable-linux-aio --target-list=x86_64-softmmu --enable-kvm
+# make -j8
+TCP=2233
+VNC=2
+
+QEMUEXE=./qemu-lightnvm/x86_64-softmmu/qemu-system-x86_64
+IMAGE=images/lightnvm.qcow2
+
+${QEMUEXE}  -m 2048 ${IMAGE} \
+  -drive file=drives/nvme1.img,if=none,id=nvme1 \
+  -device nvme,drive=nvme1,serial=nvme1,namespaces=1,cmb=0 \
+  -drive file=drives/nvme2.img,if=none,id=nvme2 \
+  -device nvme,drive=nvme2,serial=nvme2,namespaces=1,cmb=256 \
+  -drive file=drives/lightnvm1.img,if=none,id=lightnvm1 \
+  -device nvme,drive=lightnvm1,serial=lightnvm1,namespaces=1,lver=1,lchannels=1,nlbaf=5,lba_index=3,mdts=10 \
+  -drive file=drives/lightnvm2.img,if=none,id=lightnvm2 \
+  -device nvme,drive=lightnvm2,serial=lightnvm2,namespaces=1,lver=1,lchannels=1,nlbaf=5,lba_index=3,mdts=10 \
+  -vnc 0.0.0.0:${VNC} --enable-kvm -redir tcp:${TCP}::22 --monitor stdio
