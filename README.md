@@ -18,3 +18,19 @@ This folder contains some useful scripts for managing the lighnvm fork
 of QEMU to enable testing without physical lightnvm compliant block
 devices. The QEMU fork is at
 https://github.com/OpenChannelSSD/qemu-nvme. 
+
+## nvme-cli
+
+This is a submodule pointing to the lightnvm branch of the nvme-cli
+project. Refer to the README in the submodule for more information. 
+
+## sanity
+
+This is a sanity test ;-). Run the shell script called sanity.sh with
+appropriate arguments to create and test lightnvm block devices that
+use kernel plug-ins as the FTL. Uses the most excelent fio tool in
+order to test the created block device.
+
+# Contributions
+
+Pull requests and patches gratefully received ;-).
