@@ -11,6 +11,7 @@ verify=md5
 direct=1
 rw=randrw
 rwmixread=0
+group_reporting=1
 runtime=${RUNTIME}
 filename=${FILENAME}
 ioengine=${IOENGINE}
