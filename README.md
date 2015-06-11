@@ -26,10 +26,23 @@ project. Refer to the README in the submodule for more information.
 
 ## sanity
 
-This is a sanity test ;-). Run the shell script called sanity.sh with
-appropriate arguments to create and test lightnvm block devices that
-use kernel plug-ins as the FTL. Uses the most excelent fio tool in
-order to test the created block device.
+This is a sanity test ;-). Run the python script called lnvm_test.py
+with appropriate arguments to create and test lightnvm block devices that
+use kernel plug-ins as the FTL. 'python lnvm_test.py -h' gives an
+overview of the available commands.Sanity uses the most excelent fio tool
+in order to test the createdblock device.
+
+Useful arguments are: <br />
+-g: Execute a set of auto-generated fio tests <br />
+-s: Execute any fio tests (*.fio) in fio_tests/
+
+A bash script called sanity.sh is also provided as an alternative for
+single fio tests.
+
+Note that both scripts must be launched with root privileges due to fio
+
+TODO: -c: Add single test support as in sanity.sh <br />
+TODO: Load/unload LightNVM target for each test
 
 # Contributions
 
