@@ -39,6 +39,8 @@ Useful arguments are: <br />
 A bash script called sanity.sh is also provided as an alternative for
 single fio tests.
 
+Note that both scripts must be launched with root privileges due to fio
+
 TODO: -c: Add single test support as in sanity.sh <br />
 TODO: Load/unload LightNVM target for each test
 
