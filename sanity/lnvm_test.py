@@ -25,12 +25,11 @@ fio_rw = 'write'
 fio_force = ''
 
 # LightNVM configuration (modifiable from input arguments)
-lnvm_device = 'nulln0'
 lnvm_target = 'sanity'
-lnvm_file = '/dev/' + lnvm_target
 lnvm_config = '/sys/module/lnvm/parameters/configure_debug'
-lnvm_config_cmd = ("echo \"a " + lnvm_device + " " + lnvm_target + " rrpc 0:0\" > " + lnvm_config)
-lnvm_remove_cmd = ("echo \"d " + lnvm_target + "\" > " + lnvm_config)
+lnvm_file = ''
+lnvm_config_cmd = ''
+lnvm_remove_cmd = ''
 
 # Test parameters (modifiable from input arguments)
 n_iterations = 1
@@ -184,19 +183,44 @@ def all(args, f):
     scripts(args, f)
     generated(args, f)
 
+def configure_paths(lnvm_device):
+    global lnvm_file
+    global lnvm_config_cmd
+    global lnvm_remove_cmd
+
+    lnvm_file = '/dev/' + lnvm_target
+    lnvm_config = '/sys/module/lnvm/parameters/configure_debug'
+    lnvm_config_cmd = ("echo \"a " + lnvm_device + " " + lnvm_target + " rrpc 0:0\" > " + lnvm_config)
+    lnvm_remove_cmd = ("echo \"d " + lnvm_target + "\" > " + lnvm_config)
+    print lnvm_config_cmd
+    print lnvm_remove_cmd
+
+
 def main():
     parser = argparse.ArgumentParser(
         description=
-        'Test LightNVM-enabled devices using flexible I/O tester (fio).')
+        'Test LightNVM-enabled devices using flexible I/O tester (fio). \
+        One of [-c, -s, -a] must be provided. A device [-d] must be also \
+        provided.')
+
     parser.add_argument('-g', '--generated', dest='action', action='store_const',
                         const=generated, help='Execute generated fio tests \
                                 (--minimal enabled).')
+
     parser.add_argument('-c', '--custom', dest='action', action='store_const',
                         const=custom, help='Execute custom fio tests.')
+
     parser.add_argument('-s', '--scripts', dest='action', action='store_const',
                         const=scripts, help='Execute fio scripts in fio_tests/')
+
     parser.add_argument('-a', '--all', dest='action', action='store_const',
                         const=all, help='Execute all fio tests.')
+
+    parser.add_argument('-d', '--device', dest='device', action='store', required=True,
+                        help='Choose device to create LightNVM target from. \
+                        Supported devices can be seeing executing: \
+                        \'cat /sys/module/lnvm/parameters/configure_debug\'. \
+                        This argument is mandatory.')
 
     parser.add_argument('-m', '--minimal', action='store_true',
                         help='Execute fio with --minimal and parse output to \
@@ -205,17 +229,28 @@ def main():
                         latmax;latavg')
 
     parser.add_argument('-i', '--iterations', action='store',
-                        help='Execute fio with --minimal (good for scripting).')
+                        help='Execute each test i times. This allows to exclude \
+                        variances in the host where the tests are being \
+                        executed. Execute fio with --minimal (good for \
+                        scripting).')
+
     parser.add_argument('-o', '--output', action='store_true',
                         help='Store output in file with format: kernel_version- \
                         time(H-M-S)-fio.csv.')
 
     args = parser.parse_args()
     if args.action is None:
-        parser.parse_args(['-h'])
+        parser.print_help()
 
     if args.iterations is not None:
         n_iterations = int(args.iterations)
+
+
+    if args.device is not None:
+        lnvm_device = args.device
+        print lnvm_device
+
+    configure_paths(lnvm_device)
 
     if args.output:
         f = initialize_file()
