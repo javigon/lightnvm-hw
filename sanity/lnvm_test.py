@@ -122,11 +122,13 @@ def generated(args, f):
         for fio_block_size in ('4k', '16k', '128k', '512k'):
             for fio_num_jobs in ('1', '32', '64'):
                 for fio_io_depth in ('1', '8', '32', '64', '128'):
-                    command = (" FILENAME=" + lnvm_file + " SIZE=" + fio_size +
-                            " NUM_JOBS=" + fio_num_jobs + " IO_DEPTH=" +
-                            fio_io_depth + " BLOCK_SIZE=" + fio_block_size +
-                            " RUNTIME=" + fio_runtime + " IOENGINE=" +
-                            fio_ioengine + " " + fio_exe_l + " " + fio_template)
+                    command = (" FILENAME=" + lnvm_file + " RW=" + fio_rw +
+                            " SIZE=" + fio_size + " NUM_JOBS=" + fio_num_jobs +
+                            " IO_DEPTH=" + fio_io_depth +
+                            " BLOCK_SIZE=" + fio_block_size +
+                            " RUNTIME=" + fio_runtime +
+                            " IOENGINE=" + fio_ioengine + " " + fio_exe_l + " "
+                            + fio_template)
 
                     if args.minimal:
                         result = execute_minimal_test(command)

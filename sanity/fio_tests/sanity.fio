@@ -9,9 +9,9 @@
 do_verify=1
 verify=md5
 direct=1
-rw=randrw
 rwmixread=0
 group_reporting=1
+rw=${RW}
 runtime=${RUNTIME}
 filename=${FILENAME}
 ioengine=${IOENGINE}
