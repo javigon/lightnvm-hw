@@ -118,7 +118,6 @@ def generated(args, f):
 
     print COLUMNS_MIN
     for fio_rw in ('write', 'randwrite', 'read', 'randread'):
-        # for fio_block_size in ('512', '1k', '4k', '512k'):
         for fio_block_size in ('4k', '16k', '128k', '512k'):
             for fio_num_jobs in ('1', '32', '64'):
                 for fio_io_depth in ('1', '8', '32', '64', '128'):
