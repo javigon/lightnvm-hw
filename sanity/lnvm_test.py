@@ -25,13 +25,12 @@ fio_rw = 'write'
 fio_force = ''
 
 # LightNVM configuration (modifiable from input arguments)
-lnvm_device = 'nullb0'
+lnvm_device = 'nulln0'
 lnvm_target = 'sanity'
 lnvm_file = '/dev/' + lnvm_target
-lnvm_config = '/sys/block/' + lnvm_device + '/lightnvm/configure'
-lnvm_remove = '/sys/block/' + lnvm_device + '/lightnvm/remove'
-lnvm_config_cmd = ("echo \"rrpc " + lnvm_target + " 0:0\" > " + lnvm_config)
-lnvm_remove_cmd = ("echo \"" + lnvm_target + "\" > " + lnvm_remove)
+lnvm_config = '/sys/module/lnvm/parameters/configure_debug'
+lnvm_config_cmd = ("echo \"a " + lnvm_device + " " + lnvm_target + " rrpc 0:0\" > " + lnvm_config)
+lnvm_remove_cmd = ("echo \"d " + lnvm_target + "\" > " + lnvm_config)
 
 # Test parameters (modifiable from input arguments)
 n_iterations = 1
@@ -173,7 +172,7 @@ def scripts(args, f):
                 result = execute_minimal_test(command)
             else:
                 result = execute_test(command)
-                print ">>> Executed fio script:" + fio_test_dir + file
+                print ">>> Execute fio script:" + fio_test_dir + file
 
             print result
             if args.output:
@@ -184,7 +183,7 @@ def all(args, f):
     scripts(args, f)
     generated(args, f)
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(
         description=
         'Test LightNVM-enabled devices using flexible I/O tester (fio).')
@@ -223,18 +222,20 @@ if __name__ == '__main__':
         f = None
 
     if not os.path.exists(lnvm_config):
-        print ("lnvm_test: Device " + lnvm_device + " is not LightNVM enabled!")
+        print ("lnvm_test: LightNVM not enabled!")
+        return
 
-    # TODO: Uncomment when bug is fixed in LightNVM
-    # if os.path.exists(lnvm_file):
-        #TODO: Implement scriptable configure/remove in LightNVM
-        # result = subprocess.check_output(lnvm_remove_cmd, shell = True)
-        # result = subprocess.check_output(lnvm_config_cmd, shell = True)
+    if os.path.exists(lnvm_file):
+        result = subprocess.check_output(lnvm_remove_cmd, shell = True)
 
-    if not os.path.exists(lnvm_file):
-        result = subprocess.check_output(lnvm_config_cmd, shell = True)
+    result = subprocess.check_output(lnvm_config_cmd, shell = True)
 
     args.action(args, f)
 
+    result = subprocess.check_output(lnvm_remove_cmd, shell = True)
+
     if args.output:
         f.close
+
+if __name__ == '__main__':
+    main()
